@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>業務記錄 · 蕙琦</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -13,46 +13,29 @@
   --ink: #1a1a2e;
   --ink2: #5a5a7a;
   --accent: #c84b31;
-  --accent2: #e8703a;
-  --lib: #2d6a9f;
-  --irb: #7b3fa0;
-  --dental: #c84b31;
-  --other: #2e7d5e;
-  --mgmt: #b5620a;
-  --event: #c47a00;
   --border: #e0ddd6;
   --shadow: 0 2px 12px rgba(0,0,0,0.08);
   --r: 12px;
+  --lib: #2d6a9f; --irb: #7b3fa0; --dental: #c84b31;
+  --other: #2e7d5e; --mgmt: #b5620a; --event: #c47a00;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; font-size: 14px; }
 
-body {
-  font-family: 'Noto Sans TC', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
-  min-height: 100vh;
-  font-size: 14px;
-}
-
-/* ── Header ── */
 .hdr {
-  background: var(--ink);
-  color: white;
+  background: var(--ink); color: white;
   padding: 14px 18px 12px;
   position: sticky; top: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
 }
 .hdr-title { font-size: 16px; font-weight: 900; letter-spacing: 1px; }
-.hdr-sub { font-size: 11px; opacity: 0.55; margin-top: 1px; }
+.hdr-sub { font-size: 11px; opacity: 0.5; margin-top: 1px; }
 .hdr-month {
-  background: var(--accent); color: white;
-  border: none; border-radius: 8px;
-  padding: 6px 14px; font-size: 13px; font-weight: 700;
-  font-family: inherit; cursor: pointer;
+  background: var(--accent); color: white; border: none;
+  border-radius: 8px; padding: 6px 14px; font-size: 13px;
+  font-weight: 700; font-family: inherit; cursor: pointer;
 }
 
-/* ── Tabs ── */
 .tabs {
   display: flex; background: var(--card);
   border-bottom: 2px solid var(--border);
@@ -61,227 +44,217 @@ body {
 }
 .tabs::-webkit-scrollbar { display: none; }
 .tab {
-  flex: none; padding: 10px 18px;
+  flex: none; padding: 10px 16px;
   font-size: 13px; font-weight: 700; color: var(--ink2);
   cursor: pointer; border-bottom: 3px solid transparent;
   white-space: nowrap; transition: all 0.2s;
 }
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* ── Content ── */
 .page { display: none; padding: 14px; }
 .page.active { display: block; }
 
-/* ── Stats ── */
-.stats-row {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 10px; margin-bottom: 14px;
-}
-.stat-card {
-  background: var(--card); border-radius: var(--r);
-  padding: 12px 10px; text-align: center;
-  box-shadow: var(--shadow);
-}
-.stat-card .val { font-size: 24px; font-weight: 900; color: var(--accent); }
+/* Cards */
+.card { background: var(--card); border-radius: var(--r); padding: 16px; margin-bottom: 12px; box-shadow: var(--shadow); }
+.card-title { font-size: 14px; font-weight: 900; margin-bottom: 12px; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 12px; }
+.stat-card { background: var(--card); border-radius: var(--r); padding: 12px 8px; text-align: center; box-shadow: var(--shadow); }
+.stat-card .val { font-size: 22px; font-weight: 900; color: var(--accent); }
 .stat-card .lbl { font-size: 11px; color: var(--ink2); margin-top: 2px; }
+.sec-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.sec-pill { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 4px; }
 
-.section-stats { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
-.sec-pill {
-  padding: 5px 12px; border-radius: 20px;
-  font-size: 12px; font-weight: 700;
-  display: flex; align-items: center; gap: 5px;
-}
-.sec-pill .hrs { font-size: 13px; }
-
-/* ── Quick Record ── */
-.month-row {
-  display: flex; gap: 8px; margin-bottom: 14px; align-items: center;
-}
-.month-input {
-  flex: 1; border: 2px solid var(--border); border-radius: 8px;
-  padding: 9px 12px; font-size: 14px; font-family: inherit;
-  background: var(--card);
-}
-.month-input:focus { outline: none; border-color: var(--accent); }
-.btn-set {
-  background: var(--ink); color: white; border: none;
-  border-radius: 8px; padding: 9px 16px;
-  font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer;
-}
-
-/* ── Section groups ── */
-.sec-group { margin-bottom: 16px; }
+/* Section groups */
+.sec-group { margin-bottom: 14px; }
 .sec-hdr {
   font-size: 11px; font-weight: 900; letter-spacing: 1px;
-  text-transform: uppercase; color: var(--ink2);
-  padding: 6px 0 6px 2px;
-  display: flex; align-items: center; gap: 6px;
-}
-.sec-hdr::before {
-  content: ''; display: block; width: 3px; height: 14px;
-  border-radius: 2px;
-}
-.sec-lib .sec-hdr::before { background: var(--lib); }
-.sec-irb .sec-hdr::before { background: var(--irb); }
-.sec-dental .sec-hdr::before { background: var(--dental); }
-.sec-other .sec-hdr::before { background: var(--other); }
-.sec-mgmt .sec-hdr::before { background: var(--mgmt); }
-.sec-event .sec-hdr::before { background: var(--event); }
-
-.task-grid { display: flex; flex-direction: column; gap: 6px; }
-.task-btn {
+  color: var(--ink2); padding: 5px 0 5px 10px;
   display: flex; align-items: center; justify-content: space-between;
-  background: var(--card); border: 1.5px solid var(--border);
-  border-radius: 10px; padding: 10px 14px;
-  cursor: pointer; font-family: inherit;
-  transition: all 0.15s; text-align: left;
+  border-left: 3px solid var(--border);
 }
-.task-btn:active { transform: scale(0.98); }
-.task-btn.active { border-color: var(--accent); background: #fff5f3; }
-.task-name { font-size: 13px; font-weight: 600; color: var(--ink); flex: 1; }
-.task-freq { font-size: 11px; color: var(--ink2); margin-left: 8px; white-space: nowrap; }
+.sec-lib .sec-hdr { border-left-color: var(--lib); color: var(--lib); }
+.sec-irb .sec-hdr { border-left-color: var(--irb); color: var(--irb); }
+.sec-dental .sec-hdr { border-left-color: var(--dental); color: var(--dental); }
+.sec-other .sec-hdr { border-left-color: var(--other); color: var(--other); }
+.sec-mgmt .sec-hdr { border-left-color: var(--mgmt); color: var(--mgmt); }
+.sec-event .sec-hdr { border-left-color: var(--event); color: var(--event); }
 
-/* ── Input form ── */
+.task-list { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+.task-row {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--card); border: 1.5px solid var(--border);
+  border-radius: 10px; padding: 9px 12px;
+  transition: all 0.15s;
+}
+.task-row.active { border-color: var(--accent); background: #fff5f3; }
+.task-btn-area { flex: 1; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+.task-btn-area:active { opacity: 0.7; }
+.task-name { font-size: 13px; font-weight: 600; color: var(--ink); }
+.task-freq { font-size: 11px; color: var(--ink2); }
+.task-del { background: none; border: none; cursor: pointer; color: #ddd; font-size: 16px; padding: 2px 4px; flex-shrink: 0; }
+.task-del:active { color: var(--accent); }
+
+.add-task-row { display: flex; gap: 6px; margin-top: 8px; }
+.add-task-input {
+  flex: 1; border: 1.5px dashed var(--border); border-radius: 8px;
+  padding: 8px 10px; font-size: 13px; font-family: inherit;
+  background: var(--bg); color: var(--ink);
+}
+.add-task-input:focus { outline: none; border-color: var(--accent); background: white; }
+.freq-select {
+  border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 8px 6px; font-size: 12px; font-family: inherit;
+  background: white; color: var(--ink); width: 72px;
+}
+.btn-add-task {
+  background: var(--ink); color: white; border: none;
+  border-radius: 8px; padding: 8px 12px; font-size: 13px;
+  font-weight: 700; font-family: inherit; cursor: pointer; white-space: nowrap;
+}
+.btn-add-task:active { opacity: 0.8; }
+
+/* Input form */
 .input-card {
-  background: #fff8f6;
-  border: 2px solid var(--accent);
-  border-radius: var(--r); padding: 14px;
-  margin-bottom: 14px;
+  background: #fff8f6; border: 2px solid var(--accent);
+  border-radius: var(--r); padding: 14px; margin-bottom: 14px;
   animation: slideDown 0.2s ease;
 }
-@keyframes slideDown { from { opacity:0; transform: translateY(-8px); } to { opacity:1; transform: translateY(0); } }
-.input-task-name { font-size: 14px; font-weight: 900; color: var(--accent); margin-bottom: 12px; }
-.input-row { display: flex; flex-direction: column; gap: 8px; }
-.input-row .field { display: flex; flex-direction: column; gap: 4px; }
-.input-row label { font-size: 11px; font-weight: 700; color: var(--ink2); }
-.input-row input, .input-row textarea {
+@keyframes slideDown { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+.input-task-name { font-size: 14px; font-weight: 900; color: var(--accent); margin-bottom: 10px; }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+.field label { font-size: 11px; font-weight: 700; color: var(--ink2); }
+.field input, .field textarea {
   border: 1.5px solid var(--border); border-radius: 8px;
-  padding: 9px 12px; font-size: 14px; font-family: inherit;
-  background: white;
+  padding: 9px 12px; font-size: 14px; font-family: inherit; background: white;
 }
-.input-row input:focus, .input-row textarea:focus {
-  outline: none; border-color: var(--accent);
-}
-.input-row textarea { resize: none; height: 64px; }
+.field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+.field textarea { resize: none; height: 60px; }
 .inline-row { display: flex; gap: 8px; }
 .inline-row .field { flex: 1; }
-.btn-add {
-  width: 100%; background: var(--accent); color: white;
-  border: none; border-radius: 10px; padding: 12px;
-  font-size: 15px; font-weight: 900; font-family: inherit;
-  cursor: pointer; margin-top: 4px; letter-spacing: 0.5px;
-  transition: background 0.15s;
+.btn-submit {
+  width: 100%; background: var(--accent); color: white; border: none;
+  border-radius: 10px; padding: 12px; font-size: 15px;
+  font-weight: 900; font-family: inherit; cursor: pointer; letter-spacing: 0.5px;
 }
-.btn-add:active { background: #a83020; }
+.btn-submit:active { background: #a83020; }
 .btn-cancel {
   width: 100%; background: none; color: var(--ink2);
   border: 1.5px solid var(--border); border-radius: 10px;
-  padding: 10px; font-size: 13px; font-family: inherit;
-  cursor: pointer; margin-top: 6px;
+  padding: 10px; font-size: 13px; font-family: inherit; cursor: pointer; margin-top: 6px;
 }
 
-/* ── Record list ── */
-.rec-section { margin-bottom: 16px; }
+/* Record list */
+.rec-sec { margin-bottom: 14px; }
 .rec-sec-hdr {
-  font-size: 12px; font-weight: 900; color: white;
-  padding: 6px 12px; border-radius: 8px 8px 0 0;
-  display: flex; justify-content: space-between; align-items: center;
+  color: white; padding: 7px 12px; border-radius: 8px 8px 0 0;
+  display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 900;
 }
-.rec-sec-hdr .sub-total {
-  font-size: 12px; background: rgba(255,255,255,0.2);
-  padding: 2px 10px; border-radius: 10px;
-}
-.rec-bg-lib { background: var(--lib); }
-.rec-bg-irb { background: var(--irb); }
-.rec-bg-dental { background: var(--dental); }
-.rec-bg-other { background: var(--other); }
-.rec-bg-mgmt { background: var(--mgmt); }
-.rec-bg-event { background: var(--event); }
-
+.rec-sec-hdr .sub { font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; }
+.bg-lib{background:var(--lib)} .bg-irb{background:var(--irb)} .bg-dental{background:var(--dental)}
+.bg-other{background:var(--other)} .bg-mgmt{background:var(--mgmt)} .bg-event{background:var(--event)}
 .rec-list { background: var(--card); border-radius: 0 0 8px 8px; overflow: hidden; }
-.rec-item {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 10px 12px; border-bottom: 1px solid var(--border);
-}
+.rec-item { display: flex; align-items: flex-start; gap: 8px; padding: 9px 12px; border-bottom: 1px solid var(--border); }
 .rec-item:last-child { border-bottom: none; }
 .rec-info { flex: 1; min-width: 0; }
-.rec-task { font-size: 13px; font-weight: 700; color: var(--ink); }
+.rec-task { font-size: 13px; font-weight: 700; }
 .rec-desc { font-size: 12px; color: var(--ink2); margin-top: 2px; word-break: break-all; }
 .rec-date { font-size: 11px; color: #aaa; margin-top: 2px; }
-.rec-hrs {
-  background: var(--ink); color: white;
-  border-radius: 20px; padding: 3px 10px;
-  font-size: 12px; font-weight: 900; white-space: nowrap;
-  align-self: flex-start;
-}
-.rec-del {
-  background: none; border: none; cursor: pointer;
-  color: #ccc; font-size: 18px; padding: 0 0 0 4px;
-  align-self: flex-start;
-}
+.rec-hrs { background: var(--ink); color: white; border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 900; white-space: nowrap; align-self: flex-start; }
+.rec-del { background: none; border: none; cursor: pointer; color: #ccc; font-size: 18px; padding: 0 0 0 4px; align-self: flex-start; }
 .rec-del:active { color: var(--accent); }
 
-/* ── Empty state ── */
+/* Settings */
+.month-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.month-input { flex: 1; border: 2px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: inherit; background: var(--card); }
+.month-input:focus { outline: none; border-color: var(--accent); }
+.btn-set { background: var(--ink); color: white; border: none; border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 700; font-family: inherit; cursor: pointer; }
+
+/* Export */
+.btn-exp {
+  display: block; width: 100%; padding: 12px; border-radius: 10px; border: none;
+  font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; margin-bottom: 8px;
+}
+.btn-exp:active { opacity: 0.8; }
+.btn-excel { background: #1d6f42; color: white; }
+.btn-sync { background: var(--lib); color: white; }
+.btn-danger { background: var(--accent); color: white; }
+
+/* Empty */
 .empty { text-align: center; padding: 48px 20px; color: #bbb; }
 .empty .ico { font-size: 40px; margin-bottom: 10px; }
-.empty p { font-size: 13px; }
 
-/* ── Export ── */
-.export-card {
-  background: var(--card); border-radius: var(--r);
-  padding: 16px; margin-bottom: 14px;
-  box-shadow: var(--shadow);
-}
-.export-card h3 { font-size: 14px; font-weight: 900; margin-bottom: 10px; }
-.btn-export {
-  display: block; width: 100%;
-  padding: 12px; border-radius: 10px; border: none;
-  font-size: 14px; font-weight: 700; font-family: inherit;
-  cursor: pointer; margin-bottom: 8px; text-align: center;
-  transition: opacity 0.15s;
-}
-.btn-export:active { opacity: 0.8; }
-.btn-excel { background: #1d6f42; color: white; }
-.btn-csv { background: var(--ink); color: white; }
-
-/* ── Loading / Toast ── */
+/* Toast / Loading */
 .toast {
   position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-  background: var(--ink); color: white;
-  padding: 10px 20px; border-radius: 20px;
-  font-size: 13px; font-weight: 700;
-  transition: transform 0.3s; z-index: 999; white-space: nowrap;
+  background: var(--ink); color: white; padding: 10px 20px; border-radius: 20px;
+  font-size: 13px; font-weight: 700; transition: transform 0.3s; z-index: 999; white-space: nowrap;
 }
 .toast.show { transform: translateX(-50%) translateY(0); }
-.loading-overlay {
+.overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,0.35);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 998; display: none;
+  display: none; align-items: center; justify-content: center; z-index: 998;
 }
-.loading-box {
-  background: white; border-radius: var(--r);
-  padding: 24px 32px; text-align: center;
-  font-size: 14px; font-weight: 700;
-}
-.spinner {
-  width: 32px; height: 32px; border: 3px solid var(--border);
-  border-top-color: var(--accent); border-radius: 50%;
-  animation: spin 0.8s linear infinite; margin: 0 auto 12px;
-}
+.overlay.on { display: flex; }
+.loading-box { background: white; border-radius: var(--r); padding: 24px 32px; text-align: center; }
+.spinner { width: 32px; height: 32px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: none; align-items: flex-end; justify-content: center; z-index: 200;
+}
+.modal-overlay.on { display: flex; }
+.modal {
+  background: var(--card); border-radius: 16px 16px 0 0;
+  padding: 20px; width: 100%; max-width: 500px;
+  animation: slideUp 0.25s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal h3 { font-size: 15px; font-weight: 900; margin-bottom: 14px; }
+.modal .field input { width: 100%; }
+.modal .field select { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: inherit; }
+.modal-btns { display: flex; gap: 8px; margin-top: 12px; }
+.modal-btns button { flex: 1; padding: 11px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; }
+.btn-confirm { background: var(--accent); color: white; }
+.btn-close-modal { background: var(--bg); color: var(--ink2); }
 </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
+<div class="overlay" id="loadingOverlay">
   <div class="loading-box">
     <div class="spinner"></div>
-    <div id="loadingMsg">讀取中…</div>
+    <div id="loadingMsg">處理中…</div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
 
-<!-- Header -->
+<!-- Add Task Modal -->
+<div class="modal-overlay" id="addTaskModal">
+  <div class="modal">
+    <h3 id="modalTitle">新增業務項目</h3>
+    <div class="field">
+      <label>項目名稱</label>
+      <input type="text" id="newTaskName" placeholder="輸入業務項目名稱">
+    </div>
+    <div class="field">
+      <label>頻次</label>
+      <select id="newTaskFreq">
+        <option>不定期</option><option>每日</option><option>每周</option>
+        <option>每月</option><option>每季</option><option>每年</option>
+        <option>Q4M</option><option>每2年</option><option>雙周</option>
+      </select>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-close-modal" onclick="closeModal()">取消</button>
+      <button class="btn-confirm" onclick="confirmAddTask()">新增</button>
+    </div>
+  </div>
+</div>
+
 <div class="hdr">
   <div>
     <div class="hdr-title">📋 業務記錄</div>
@@ -292,157 +265,173 @@ body {
   </button>
 </div>
 
-<!-- Tabs -->
 <div class="tabs">
   <div class="tab active" onclick="showTab('record')" data-tab="record">＋ 記錄</div>
-  <div class="tab" onclick="showTab('list')" data-tab="list">📋 本月記錄</div>
+  <div class="tab" onclick="showTab('list')" data-tab="list">📋 本月</div>
+  <div class="tab" onclick="showTab('manage')" data-tab="manage">✏️ 管理項目</div>
   <div class="tab" onclick="showTab('export')" data-tab="export">📊 匯出</div>
   <div class="tab" onclick="showTab('setting')" data-tab="setting">⚙ 設定</div>
 </div>
 
-<!-- Page: Record -->
 <div class="page active" id="page-record">
   <div id="inputForm" style="display:none"></div>
   <div id="taskList"></div>
 </div>
 
-<!-- Page: List -->
 <div class="page" id="page-list">
   <div id="statsArea"></div>
   <div id="recordList"></div>
 </div>
 
-<!-- Page: Export -->
+<div class="page" id="page-manage">
+  <div id="manageList"></div>
+</div>
+
 <div class="page" id="page-export">
-  <div class="export-card">
-    <h3>📊 產出月報</h3>
-    <p style="font-size:12px;color:var(--ink2);margin-bottom:12px">將本月記錄整理成與原始業務報告相同格式</p>
-    <button class="btn-export btn-excel" onclick="exportExcel()">📥 下載 Excel 月報（.xlsx）</button>
-    <button class="btn-export btn-csv" onclick="exportCSV()">📄 下載 CSV 原始記錄</button>
+  <div class="card">
+    <div class="card-title">📊 產出月報</div>
+    <p style="font-size:12px;color:var(--ink2);margin-bottom:12px">整理成與原始業務報告相同格式</p>
+    <button class="btn-exp btn-excel" onclick="exportExcel()">📥 下載 Excel 月報</button>
   </div>
-  <div class="export-card">
-    <h3>🔄 重新載入雲端資料</h3>
-    <button class="btn-export" style="background:var(--lib)" onclick="loadFromCloud()">從 Google 試算表同步</button>
+  <div class="card">
+    <div class="card-title">🔄 雲端同步</div>
+    <button class="btn-exp btn-sync" onclick="loadFromCloud()">從 Google 試算表同步資料</button>
   </div>
 </div>
 
-<!-- Page: Setting -->
 <div class="page" id="page-setting">
-  <div class="export-card">
-    <h3>⚙ 月份設定</h3>
+  <div class="card">
+    <div class="card-title">⚙ 月份設定</div>
     <div class="month-row">
       <input class="month-input" id="monthInput" placeholder="如：115.03" maxlength="8">
       <button class="btn-set" onclick="setMonth()">確定</button>
     </div>
     <p style="font-size:12px;color:var(--ink2)">目前月份：<strong id="curMonthDisplay">未設定</strong></p>
   </div>
-  <div class="export-card" style="background:#fff8f6;border:1.5px solid #fde0d8">
-    <h3 style="color:var(--accent)">⚠ 清除本月資料</h3>
-    <p style="font-size:12px;color:var(--ink2);margin-bottom:10px">僅清除本機快取，雲端試算表資料不受影響</p>
-    <button class="btn-export" style="background:var(--accent)" onclick="clearLocal()">清除本機快取</button>
+  <div class="card" style="background:#fff8f6;border:1.5px solid #fde0d8">
+    <div class="card-title" style="color:var(--accent)">⚠ 清除本機快取</div>
+    <p style="font-size:12px;color:var(--ink2);margin-bottom:10px">僅清除本機，雲端資料不受影響</p>
+    <button class="btn-exp btn-danger" onclick="clearLocal()">清除</button>
   </div>
 </div>
 
 <script>
 const API = 'https://script.google.com/macros/s/AKfycbxTZShbz0HmX__CPsqOlJRpr9C159zGXLP60xz4-ws0QDPmqXNHzsLom1W6NTmkqs2DUA/exec';
 
-const TASKS = [
-  { s:'圖書館相關業務', c:'lib', id:'lib1',  n:'流通作業(借、還、預約)', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib2',  n:'期刊代查詢(含館際合作)', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib3',  n:'讀者資料維護(新增、停權)', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib4',  n:'門禁系統管理(新增、刪除)', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib5',  n:'報紙管理', f:'每日' },
-  { s:'圖書館相關業務', c:'lib', id:'lib6',  n:'環境維護與管理(含空間規劃)', f:'每日' },
-  { s:'圖書館相關業務', c:'lib', id:'lib7',  n:'新書公告', f:'每月' },
-  { s:'圖書館相關業務', c:'lib', id:'lib8',  n:'各項資源介購資料蒐集及需求調查', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib9',  n:'各項資源介購代理商聯繫(含報價、比價等)', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib10', n:'經費核銷', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib11', n:'資源編目、上架、典藏、裝訂處理', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib12', n:'圖書館網頁維護', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib13', n:'圖書館相關SOP制、修訂', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib14', n:'圖委會', f:'Q4M' },
-  { s:'圖書館相關業務', c:'lib', id:'lib15', n:'館藏盤點', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib16', n:'讀者服務', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib17', n:'統計報表', f:'每月' },
-  { s:'圖書館相關業務', c:'lib', id:'lib18', n:'支援圖書資料庫資源共享(楊天、天祥)', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib19', n:'圖書預算編列與管控', f:'每年' },
-  { s:'圖書館相關業務', c:'lib', id:'lib20', n:'圖書館文件收發、辦理、追蹤', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib21', n:'資料庫試用', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib22', n:'核定每週圖書館場地借用與聯繫', f:'每周' },
-  { s:'圖書館相關業務', c:'lib', id:'lib23', n:'外訓', f:'不定期' },
-  { s:'圖書館相關業務', c:'lib', id:'lib24', n:'資料庫教育訓練課程', f:'不定期' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb1',  n:'IRB委員會', f:'不定期' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb2',  n:'IRB公文收發', f:'每2年' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb3',  n:'IRB案件諮詢、委員與計畫主持人聯繫溝通', f:'不定期' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb4',  n:'人體研究人員講習班課程', f:'每年' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb5',  n:'案件送審(含行政審查)', f:'不定期' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb6',  n:'案件管理(紙本、電子)', f:'不定期' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb7',  n:'預算編列與管控(IRB)', f:'每年' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb8',  n:'經費核銷(IRB)', f:'不定期' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb9',  n:'IRB相關SOP制、修訂', f:'不定期' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb10', n:'IRB網頁維護', f:'不定期' },
-  { s:'IRB(人體試驗委員會)', c:'irb', id:'irb11', n:'IRB外訓', f:'不定期' },
-  { s:'牙醫PGY/國外實習生', c:'dental', id:'den1', n:'牙科評鑑資料', f:'不定期' },
-  { s:'牙醫PGY/國外實習生', c:'dental', id:'den2', n:'牙科訓練計畫', f:'不定期' },
-  { s:'牙醫PGY/國外實習生', c:'dental', id:'den3', n:'牙科說明會', f:'不定期' },
-  { s:'牙醫PGY/國外實習生', c:'dental', id:'den4', n:'牙科評鑑業務溝通', f:'不定期' },
-  { s:'其他', c:'other', id:'oth1',  n:'醫務會議-會議參與與支援', f:'每周' },
-  { s:'其他', c:'other', id:'oth2',  n:'醫務會議-會議記錄', f:'每周' },
-  { s:'其他', c:'other', id:'oth3',  n:'醫務會議-醫師出席統計', f:'每月' },
-  { s:'其他', c:'other', id:'oth4',  n:'醫務會議-未出席扣款作業', f:'每月' },
-  { s:'其他', c:'other', id:'oth5',  n:'兒科-幼兒專責收案', f:'每月' },
-  { s:'其他', c:'other', id:'oth6',  n:'兒科-病房入院來源', f:'每月' },
-  { s:'其他', c:'other', id:'oth7',  n:'兒科-青少年親善服務', f:'每月' },
-  { s:'其他', c:'other', id:'oth8',  n:'兒科-協助幼兒發展評估報表', f:'每月' },
-  { s:'其他', c:'other', id:'oth9',  n:'兒科-氣喘照護', f:'每月' },
-  { s:'其他', c:'other', id:'oth10', n:'影像討論會(7-9am)', f:'雙周' },
-  { s:'其他', c:'other', id:'oth11', n:'影像討論會簽到單', f:'不定期' },
-  { s:'其他', c:'other', id:'oth12', n:'影像討論會相關通知', f:'不定期' },
-  { s:'其他', c:'other', id:'oth13', n:'影像討論會統計表', f:'每月' },
-  { s:'其他', c:'other', id:'oth14', n:'影像討論會歸檔', f:'不定期' },
-  { s:'其他', c:'other', id:'oth15', n:'院長有約', f:'每月' },
-  { s:'其他', c:'other', id:'oth16', n:'單位會議', f:'每月' },
-  { s:'其他', c:'other', id:'oth17', n:'教學小組會議', f:'每月' },
-  { s:'其他', c:'other', id:'oth18', n:'AI應用教學', f:'不定期' },
-  { s:'其他', c:'other', id:'oth19', n:'支援-醫師簡碼表(人資室)', f:'不定期' },
-  { s:'其他', c:'other', id:'oth20', n:'支援-醫師身體不適', f:'不定期' },
-  { s:'其他', c:'other', id:'oth21', n:'醫師臨時交辦-病歷照片/簡報/檔案', f:'不定期' },
-  { s:'其他', c:'other', id:'oth22', n:'醫師臨時交辦-簡報製作', f:'不定期' },
-  { s:'主管交辦', c:'mgmt', id:'mgmt1', n:'每月業務報表', f:'每月' },
-  { s:'主管交辦', c:'mgmt', id:'mgmt2', n:'新人報到', f:'不定期' },
-  { s:'主管交辦', c:'mgmt', id:'mgmt3', n:'差勤維護', f:'每月' },
-  { s:'主管交辦', c:'mgmt', id:'mgmt4', n:'醫教會/醫務會議教研簡報', f:'不定期' },
-  { s:'主管交辦', c:'mgmt', id:'mgmt5', n:'醫療部週六值班', f:'每月' },
-  { s:'活動', c:'event', id:'evt1', n:'參與院內師培課程', f:'不定期' },
-  { s:'活動', c:'event', id:'evt2', n:'其他活動', f:'不定期' },
+const SEC_ORDER = ['圖書館相關業務','IRB(人體試驗委員會)','牙醫PGY/國外實習生','其他','主管交辦','活動'];
+const CAT_MAP = { lib:'圖書館相關業務', irb:'IRB(人體試驗委員會)', dental:'牙醫PGY/國外實習生', other:'其他', mgmt:'主管交辦', event:'活動' };
+const SEC_CAT = { '圖書館相關業務':'lib','IRB(人體試驗委員會)':'irb','牙醫PGY/國外實習生':'dental','其他':'other','主管交辦':'mgmt','活動':'event' };
+const CAT_COLOR = { lib:'var(--lib)',irb:'var(--irb)',dental:'var(--dental)',other:'var(--other)',mgmt:'var(--mgmt)',event:'var(--event)' };
+const BG_CLASS = { lib:'bg-lib',irb:'bg-irb',dental:'bg-dental',other:'bg-other',mgmt:'bg-mgmt',event:'bg-event' };
+
+const DEFAULT_TASKS = [
+  {s:'圖書館相關業務',id:'lib1',n:'流通作業(借、還、預約)',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib2',n:'期刊代查詢(含館際合作)',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib3',n:'讀者資料維護(新增、停權)',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib4',n:'門禁系統管理(新增、刪除)',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib5',n:'報紙管理',f:'每日'},
+  {s:'圖書館相關業務',id:'lib6',n:'環境維護與管理(含空間規劃)',f:'每日'},
+  {s:'圖書館相關業務',id:'lib7',n:'新書公告',f:'每月'},
+  {s:'圖書館相關業務',id:'lib8',n:'各項資源介購資料蒐集及需求調查',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib9',n:'各項資源介購代理商聯繫(含報價、比價等)',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib10',n:'經費核銷',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib11',n:'資源編目、上架、典藏、裝訂處理',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib12',n:'圖書館網頁維護',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib13',n:'圖書館相關SOP制、修訂',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib14',n:'圖委會',f:'Q4M'},
+  {s:'圖書館相關業務',id:'lib15',n:'館藏盤點',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib16',n:'讀者服務',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib17',n:'統計報表',f:'每月'},
+  {s:'圖書館相關業務',id:'lib18',n:'支援圖書資料庫資源共享(楊天、天祥)',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib19',n:'圖書預算編列與管控',f:'每年'},
+  {s:'圖書館相關業務',id:'lib20',n:'圖書館文件收發、辦理、追蹤',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib21',n:'資料庫試用',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib22',n:'核定每週圖書館場地借用與聯繫',f:'每周'},
+  {s:'圖書館相關業務',id:'lib23',n:'外訓',f:'不定期'},
+  {s:'圖書館相關業務',id:'lib24',n:'資料庫教育訓練課程',f:'不定期'},
+  {s:'IRB(人體試驗委員會)',id:'irb1',n:'IRB委員會',f:'不定期'},
+  {s:'IRB(人體試驗委員會)',id:'irb2',n:'IRB公文收發',f:'每2年'},
+  {s:'IRB(人體試驗委員會)',id:'irb3',n:'IRB案件諮詢、委員與計畫主持人聯繫溝通',f:'不定期'},
+  {s:'IRB(人體試驗委員會)',id:'irb4',n:'人體研究人員講習班課程',f:'每年'},
+  {s:'IRB(人體試驗委員會)',id:'irb5',n:'案件送審(含行政審查)',f:'不定期'},
+  {s:'IRB(人體試驗委員會)',id:'irb6',n:'案件管理(紙本、電子)',f:'不定期'},
+  {s:'IRB(人體試驗委員會)',id:'irb7',n:'預算編列與管控(IRB)',f:'每年'},
+  {s:'IRB(人體試驗委員會)',id:'irb8',n:'經費核銷(IRB)',f:'不定期'},
+  {s:'IRB(人體試驗委員會)',id:'irb9',n:'IRB相關SOP制、修訂',f:'不定期'},
+  {s:'IRB(人體試驗委員會)',id:'irb10',n:'IRB網頁維護',f:'不定期'},
+  {s:'IRB(人體試驗委員會)',id:'irb11',n:'IRB外訓',f:'不定期'},
+  {s:'牙醫PGY/國外實習生',id:'den1',n:'牙科評鑑資料',f:'不定期'},
+  {s:'牙醫PGY/國外實習生',id:'den2',n:'牙科訓練計畫',f:'不定期'},
+  {s:'牙醫PGY/國外實習生',id:'den3',n:'牙科說明會',f:'不定期'},
+  {s:'牙醫PGY/國外實習生',id:'den4',n:'牙科評鑑業務溝通',f:'不定期'},
+  {s:'其他',id:'oth1',n:'醫務會議-會議參與與支援',f:'每周'},
+  {s:'其他',id:'oth2',n:'醫務會議-會議記錄',f:'每周'},
+  {s:'其他',id:'oth3',n:'醫務會議-醫師出席統計',f:'每月'},
+  {s:'其他',id:'oth4',n:'醫務會議-未出席扣款作業',f:'每月'},
+  {s:'其他',id:'oth5',n:'兒科-幼兒專責收案',f:'每月'},
+  {s:'其他',id:'oth6',n:'兒科-病房入院來源',f:'每月'},
+  {s:'其他',id:'oth7',n:'兒科-青少年親善服務',f:'每月'},
+  {s:'其他',id:'oth8',n:'兒科-協助幼兒發展評估報表',f:'每月'},
+  {s:'其他',id:'oth9',n:'兒科-氣喘照護',f:'每月'},
+  {s:'其他',id:'oth10',n:'影像討論會(7-9am)',f:'雙周'},
+  {s:'其他',id:'oth11',n:'影像討論會簽到單',f:'不定期'},
+  {s:'其他',id:'oth12',n:'影像討論會相關通知',f:'不定期'},
+  {s:'其他',id:'oth13',n:'影像討論會統計表',f:'每月'},
+  {s:'其他',id:'oth14',n:'影像討論會歸檔',f:'不定期'},
+  {s:'其他',id:'oth15',n:'院長有約',f:'每月'},
+  {s:'其他',id:'oth16',n:'單位會議',f:'每月'},
+  {s:'其他',id:'oth17',n:'教學小組會議',f:'每月'},
+  {s:'其他',id:'oth18',n:'AI應用教學',f:'不定期'},
+  {s:'其他',id:'oth19',n:'支援-醫師簡碼表(人資室)',f:'不定期'},
+  {s:'其他',id:'oth20',n:'支援-醫師身體不適',f:'不定期'},
+  {s:'其他',id:'oth21',n:'醫師臨時交辦-病歷照片/簡報/檔案',f:'不定期'},
+  {s:'其他',id:'oth22',n:'醫師臨時交辦-簡報製作',f:'不定期'},
+  {s:'主管交辦',id:'mgmt1',n:'每月業務報表',f:'每月'},
+  {s:'主管交辦',id:'mgmt2',n:'新人報到',f:'不定期'},
+  {s:'主管交辦',id:'mgmt3',n:'差勤維護',f:'每月'},
+  {s:'主管交辦',id:'mgmt4',n:'醫教會/醫務會議教研簡報',f:'不定期'},
+  {s:'主管交辦',id:'mgmt5',n:'醫療部週六值班',f:'每月'},
+  {s:'活動',id:'evt1',n:'參與院內師培課程',f:'不定期'},
+  {s:'活動',id:'evt2',n:'其他活動',f:'不定期'},
 ];
 
-const SEC_ORDER = ['圖書館相關業務','IRB(人體試驗委員會)','牙醫PGY/國外實習生','其他','主管交辦','活動'];
-const CAT_COLOR = { lib:'var(--lib)', irb:'var(--irb)', dental:'var(--dental)', other:'var(--other)', mgmt:'var(--mgmt)', event:'var(--event)' };
-const CAT_BG = { lib:'rec-bg-lib', irb:'rec-bg-irb', dental:'rec-bg-dental', other:'rec-bg-other', mgmt:'rec-bg-mgmt', event:'rec-bg-event' };
-
-let records = JSON.parse(localStorage.getItem('records_v2') || '[]');
+// State
+let records = JSON.parse(localStorage.getItem('records_v3') || '[]');
+let tasks = JSON.parse(localStorage.getItem('tasks_v3') || 'null') || JSON.parse(JSON.stringify(DEFAULT_TASKS));
 let currentMonth = localStorage.getItem('currentMonth') || '';
 let selectedTask = null;
+let modalSection = null;
 
-function save() { localStorage.setItem('records_v2', JSON.stringify(records)); localStorage.setItem('currentMonth', currentMonth); }
+function save() {
+  localStorage.setItem('records_v3', JSON.stringify(records));
+  localStorage.setItem('tasks_v3', JSON.stringify(tasks));
+  localStorage.setItem('currentMonth', currentMonth);
+}
 
-function showToast(msg, dur=2000) {
+function showToast(msg, dur=2200) {
   const t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), dur);
 }
-
-function showLoading(msg='處理中…') { document.getElementById('loadingOverlay').style.display='flex'; document.getElementById('loadingMsg').textContent=msg; }
-function hideLoading() { document.getElementById('loadingOverlay').style.display='none'; }
+function showLoading(msg='處理中…') { document.getElementById('loadingOverlay').classList.add('on'); document.getElementById('loadingMsg').textContent=msg; }
+function hideLoading() { document.getElementById('loadingOverlay').classList.remove('on'); }
 
 function showTab(tab) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + tab).classList.add('active');
   document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
-  if(tab === 'list') renderList();
-  if(tab === 'export' || tab === 'setting') renderSetting();
+  if(tab==='list') renderList();
+  if(tab==='manage') renderManage();
+  if(tab==='setting') renderSetting();
+}
+
+function init() {
+  if(currentMonth) {
+    document.getElementById('hdrMonth').textContent = currentMonth;
+    document.getElementById('curMonthDisplay').textContent = currentMonth;
+  }
+  renderTaskList();
 }
 
 function setMonth() {
@@ -460,32 +449,22 @@ function renderSetting() {
   document.getElementById('curMonthDisplay').textContent = currentMonth || '未設定';
 }
 
-function init() {
-  if(currentMonth) {
-    document.getElementById('hdrMonth').textContent = currentMonth;
-    document.getElementById('curMonthDisplay').textContent = currentMonth;
-  }
-  renderTaskList();
-  renderList();
-  // Set today's date
-  const today = new Date().toISOString().split('T')[0];
-  document.querySelectorAll('input[type=date]').forEach(i => i.value = today);
-}
-
-// ── Task list ──
+// ── Task List (Record tab) ──
 function renderTaskList() {
-  const sections = {};
-  TASKS.forEach(t => { if(!sections[t.s]) sections[t.s] = []; sections[t.s].push(t); });
+  const grouped = {};
+  tasks.forEach(t => { if(!grouped[t.s]) grouped[t.s]=[]; grouped[t.s].push(t); });
   let html = '';
   SEC_ORDER.forEach(sec => {
-    if(!sections[sec]) return;
-    const cat = sections[sec][0].c;
-    html += `<div class="sec-group sec-${cat}"><div class="sec-hdr">${sec}</div><div class="task-grid">`;
-    sections[sec].forEach(t => {
-      html += `<button class="task-btn" id="tbtn-${t.id}" onclick="selectTask('${t.id}')">
-        <span class="task-name">${t.n}</span>
-        <span class="task-freq">${t.f}</span>
-      </button>`;
+    if(!grouped[sec] || !grouped[sec].length) return;
+    const cat = SEC_CAT[sec];
+    html += `<div class="sec-group sec-${cat}"><div class="sec-hdr">${sec}</div><div class="task-list">`;
+    grouped[sec].forEach(t => {
+      html += `<div class="task-row" id="trow-${t.id}">
+        <div class="task-btn-area" onclick="selectTask('${t.id}')">
+          <span class="task-name">${t.n}</span>
+          <span class="task-freq">${t.f}</span>
+        </div>
+      </div>`;
     });
     html += `</div></div>`;
   });
@@ -493,40 +472,32 @@ function renderTaskList() {
 }
 
 function selectTask(id) {
-  document.querySelectorAll('.task-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tbtn-' + id)?.classList.add('active');
-  selectedTask = TASKS.find(t => t.id === id);
+  document.querySelectorAll('.task-row').forEach(r => r.classList.remove('active'));
+  document.getElementById('trow-' + id)?.classList.add('active');
+  selectedTask = tasks.find(t => t.id === id);
   const today = new Date().toISOString().split('T')[0];
-  document.getElementById('inputForm').style.display = 'block';
-  document.getElementById('inputForm').innerHTML = `
-    <div class="input-card">
-      <div class="input-task-name">📌 ${selectedTask.n}</div>
-      <div class="input-row">
-        <div class="field">
-          <label>說明 / 數量</label>
-          <textarea id="fDesc" placeholder="如：借書10本、查詢3篇"></textarea>
-        </div>
-        <div class="inline-row">
-          <div class="field">
-            <label>時數（小時）</label>
-            <input type="number" id="fHours" min="0" step="0.5" placeholder="0.0" inputmode="decimal">
-          </div>
-          <div class="field">
-            <label>日期</label>
-            <input type="date" id="fDate" value="${today}">
-          </div>
-        </div>
-        <button class="btn-add" onclick="addRecord()">➕ 新增記錄</button>
-        <button class="btn-cancel" onclick="closeForm()">取消</button>
-      </div>
-    </div>`;
-  document.getElementById('inputForm').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  const form = document.getElementById('inputForm');
+  form.style.display = 'block';
+  form.innerHTML = `<div class="input-card">
+    <div class="input-task-name">📌 ${selectedTask.n}</div>
+    <div class="field"><label>說明 / 數量</label>
+      <textarea id="fDesc" placeholder="如：借書10本、查詢3篇"></textarea></div>
+    <div class="inline-row">
+      <div class="field"><label>時數（小時）</label>
+        <input type="number" id="fHours" min="0" step="0.5" placeholder="0.0" inputmode="decimal"></div>
+      <div class="field"><label>日期</label>
+        <input type="date" id="fDate" value="${today}"></div>
+    </div>
+    <button class="btn-submit" onclick="addRecord()">➕ 新增記錄</button>
+    <button class="btn-cancel" onclick="closeForm()">取消</button>
+  </div>`;
+  form.scrollIntoView({ behavior:'smooth', block:'nearest' });
   setTimeout(() => document.getElementById('fHours')?.focus(), 200);
 }
 
 function closeForm() {
   document.getElementById('inputForm').style.display = 'none';
-  document.querySelectorAll('.task-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.task-row').forEach(r => r.classList.remove('active'));
   selectedTask = null;
 }
 
@@ -537,203 +508,241 @@ async function addRecord() {
   const hours = parseFloat(document.getElementById('fHours').value) || 0;
   const date = document.getElementById('fDate').value;
   if(!hours && !desc) { showToast('請填入時數或說明'); return; }
-
   const rec = {
-    id: Date.now(),
-    month: currentMonth,
-    taskId: selectedTask.id,
-    taskName: selectedTask.n,
-    section: selectedTask.s,
-    cat: selectedTask.c,
+    id: Date.now(), month: currentMonth,
+    taskId: selectedTask.id, taskName: selectedTask.n,
+    section: selectedTask.s, cat: SEC_CAT[selectedTask.s],
     desc, hours, date
   };
-
-  // Optimistically add locally
-  records.push(rec);
-  save();
+  records.push(rec); save();
   showToast('✓ 已儲存');
   closeForm();
-  
-  // Sync to cloud
   try {
-    await fetch(API, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'add', ...rec })
-    });
-  } catch(e) {
-    // no-cors means we can't read response, but request was sent
-  }
+    await fetch(API, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'add', ...rec }) });
+  } catch(e) {}
 }
 
+async function deleteRecord(id) {
+  if(!confirm('確定刪除？')) return;
+  records = records.filter(r => r.id !== id);
+  save(); renderList(); showToast('已刪除');
+  try {
+    await fetch(API, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'delete', id }) });
+  } catch(e) {}
+}
+
+// ── Manage Tasks ──
+function renderManage() {
+  const grouped = {};
+  tasks.forEach(t => { if(!grouped[t.s]) grouped[t.s]=[]; grouped[t.s].push(t); });
+  let html = '';
+  SEC_ORDER.forEach(sec => {
+    const cat = SEC_CAT[sec];
+    const list = grouped[sec] || [];
+    html += `<div class="sec-group sec-${cat}" style="margin-bottom:16px">
+      <div class="sec-hdr">${sec}
+        <span style="font-size:11px;font-weight:500;color:var(--ink2)">${list.length} 項</span>
+      </div>
+      <div class="task-list" id="mlist-${cat}">`;
+    list.forEach(t => {
+      html += `<div class="task-row" style="padding:8px 10px">
+        <div style="flex:1">
+          <span class="task-name" style="font-size:13px">${t.n}</span>
+          <span class="task-freq" style="margin-left:8px">${t.f}</span>
+        </div>
+        <button class="task-del" onclick="deleteTask('${t.id}')">🗑</button>
+      </div>`;
+    });
+    html += `</div>
+      <div class="add-task-row" style="margin-top:8px">
+        <input class="add-task-input" id="newName-${cat}" placeholder="新增項目名稱…">
+        <select class="freq-select" id="newFreq-${cat}">
+          <option>不定期</option><option>每日</option><option>每周</option>
+          <option>每月</option><option>每季</option><option>每年</option>
+          <option>Q4M</option><option>每2年</option><option>雙周</option>
+        </select>
+        <button class="btn-add-task" onclick="addTask('${cat}','${sec}')">＋ 新增</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('manageList').innerHTML = html;
+}
+
+function addTask(cat, sec) {
+  const nameEl = document.getElementById('newName-' + cat);
+  const freqEl = document.getElementById('newFreq-' + cat);
+  const name = nameEl.value.trim();
+  if(!name) { showToast('請輸入項目名稱'); nameEl.focus(); return; }
+  const newTask = {
+    s: sec,
+    id: cat + '_' + Date.now(),
+    n: name,
+    f: freqEl.value
+  };
+  tasks.push(newTask);
+  save();
+  nameEl.value = '';
+  renderManage();
+  renderTaskList();
+  showToast('✓ 已新增：' + name);
+  syncTasksToCloud();
+}
+
+function deleteTask(id) {
+  const t = tasks.find(t => t.id === id);
+  if(!t) return;
+  if(!confirm(`確定刪除「${t.n}」？\n（已記錄的歷史資料不受影響）`)) return;
+  tasks = tasks.filter(t => t.id !== id);
+  save();
+  renderManage();
+  renderTaskList();
+  showToast('已刪除');
+  syncTasksToCloud();
+}
+
+async function syncTasksToCloud() {
+  try {
+    await fetch(API, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'saveTasks', tasks }) });
+  } catch(e) {}
+}
+
+// ── Record List ──
+function renderList() {
+  const mr = records.filter(r => r.month === currentMonth);
+  const stats = document.getElementById('statsArea');
+  const list = document.getElementById('recordList');
+  if(!mr.length) {
+    stats.innerHTML='';
+    list.innerHTML=`<div class="empty"><div class="ico">📝</div><p>本月尚無記錄<br><small>點「＋ 記錄」分頁開始新增</small></p></div>`;
+    return;
+  }
+  const total = mr.reduce((s,r)=>s+r.hours,0);
+  const bySection = {};
+  mr.forEach(r=>{ bySection[r.section]=(bySection[r.section]||0)+r.hours; });
+  stats.innerHTML=`
+    <div class="stats-row">
+      <div class="stat-card"><div class="val">${total.toFixed(1)}</div><div class="lbl">總時數</div></div>
+      <div class="stat-card"><div class="val">${mr.length}</div><div class="lbl">記錄筆數</div></div>
+      <div class="stat-card"><div class="val">${Object.keys(bySection).length}</div><div class="lbl">業務類別</div></div>
+    </div>
+    <div class="sec-pills">
+      ${Object.entries(bySection).map(([s,h])=>{
+        const cat=SEC_CAT[s]||'other';
+        const short=s.replace('圖書館相關業務','圖書館').replace('IRB(人體試驗委員會)','IRB').replace('牙醫PGY/國外實習生','牙科');
+        return `<div class="sec-pill" style="background:${CAT_COLOR[cat]}20;color:${CAT_COLOR[cat]}">${short} <strong>${h.toFixed(1)}h</strong></div>`;
+      }).join('')}
+    </div>`;
+  const grouped={};
+  mr.forEach(r=>{ if(!grouped[r.section]) grouped[r.section]=[]; grouped[r.section].push(r); });
+  let html='';
+  SEC_ORDER.forEach(sec=>{
+    if(!grouped[sec]) return;
+    const recs=grouped[sec].sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+    const cat=SEC_CAT[sec]||'other';
+    const secTotal=recs.reduce((s,r)=>s+r.hours,0);
+    html+=`<div class="rec-sec">
+      <div class="rec-sec-hdr ${BG_CLASS[cat]}">
+        <span>※ ${sec}</span><span class="sub">小計 ${secTotal.toFixed(1)} 時</span>
+      </div><div class="rec-list">`;
+    recs.forEach(r=>{
+      html+=`<div class="rec-item">
+        <div class="rec-info">
+          <div class="rec-task">${r.taskName}</div>
+          ${r.desc?`<div class="rec-desc">${r.desc}</div>`:''}
+          <div class="rec-date">${r.date||''}</div>
+        </div>
+        <div class="rec-hrs">${r.hours}h</div>
+        <button class="rec-del" onclick="deleteRecord(${r.id})">×</button>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  list.innerHTML=html;
+}
+
+// ── Cloud Sync ──
 async function loadFromCloud() {
   showLoading('從 Google 試算表同步…');
   try {
     const res = await fetch(API + '?t=' + Date.now());
     const data = await res.json();
     if(Array.isArray(data)) {
-      // Map spreadsheet rows back to record objects
-      records = data.filter(r => r['月份']).map(r => ({
-        id: r['id'] || Date.now() + Math.random(),
-        month: String(r['月份'] || ''),
-        taskId: r['taskId'] || '',
-        taskName: r['業務項目'] || '',
-        section: r['類別'] || '',
-        cat: r['cat'] || getCatFromSection(r['類別']),
-        desc: r['說明數量'] || '',
-        hours: parseFloat(r['時數']) || 0,
-        date: r['日期'] || ''
+      const recData = data.filter(r=>r['月份']&&r['type']!=='task');
+      records = recData.map(r=>({
+        id: r['id']||Date.now()+Math.random(),
+        month: String(r['月份']||''),
+        taskId: r['taskId']||'',
+        taskName: r['業務項目']||'',
+        section: r['類別']||'',
+        cat: SEC_CAT[r['類別']]||'other',
+        desc: r['說明數量']||'',
+        hours: parseFloat(r['時數'])||0,
+        date: r['日期']||''
       }));
+      const taskData = data.filter(r=>r['type']==='task');
+      if(taskData.length > 0) {
+        tasks = taskData.map(r=>({ s:r['section'], id:r['id'], n:r['name'], f:r['freq'] }));
+      }
       save();
       showToast(`✓ 同步完成，共 ${records.length} 筆`);
-      renderList();
+      renderList(); renderTaskList();
     }
-  } catch(e) {
-    showToast('⚠ 同步失敗，請確認網路連線');
-  }
+  } catch(e) { showToast('⚠ 同步失敗，請確認網路連線'); }
   hideLoading();
 }
 
-function getCatFromSection(sec) {
-  if(!sec) return 'other';
-  if(sec.includes('圖書')) return 'lib';
-  if(sec.includes('IRB')) return 'irb';
-  if(sec.includes('牙')) return 'dental';
-  if(sec.includes('主管')) return 'mgmt';
-  if(sec.includes('活動')) return 'event';
-  return 'other';
-}
-
-function deleteRecord(id) {
-  if(!confirm('確定刪除？')) return;
-  records = records.filter(r => r.id !== id);
-  save();
-  renderList();
-  showToast('已刪除');
+function closeModal() {
+  document.getElementById('addTaskModal').classList.remove('on');
+  modalSection = null;
 }
 
 function clearLocal() {
-  if(!confirm('確定清除本機快取？（雲端資料不受影響）')) return;
-  records = [];
-  save();
-  renderList();
-  showToast('已清除本機快取');
-}
-
-// ── Render list ──
-function renderList() {
-  const mr = records.filter(r => r.month === currentMonth);
-  const stats = document.getElementById('statsArea');
-  const list = document.getElementById('recordList');
-
-  if(!mr.length) {
-    stats.innerHTML = '';
-    list.innerHTML = `<div class="empty"><div class="ico">📝</div><p>本月尚無記錄<br><small>點「記錄」分頁開始新增</small></p></div>`;
-    return;
-  }
-
-  const total = mr.reduce((s,r) => s + r.hours, 0);
-  const bySection = {};
-  mr.forEach(r => { bySection[r.section] = (bySection[r.section] || 0) + r.hours; });
-
-  stats.innerHTML = `
-    <div class="stats-row">
-      <div class="stat-card"><div class="val">${total.toFixed(1)}</div><div class="lbl">總時數</div></div>
-      <div class="stat-card"><div class="val">${mr.length}</div><div class="lbl">記錄筆數</div></div>
-      <div class="stat-card"><div class="val">${Object.keys(bySection).length}</div><div class="lbl">業務類別</div></div>
-    </div>
-    <div class="section-stats">
-      ${Object.entries(bySection).map(([s,h]) => {
-        const cat = getCatFromSection(s);
-        const short = s.replace('圖書館相關業務','圖書館').replace('IRB(人體試驗委員會)','IRB').replace('牙醫PGY/國外實習生','牙科');
-        return `<div class="sec-pill" style="background:${CAT_COLOR[cat]}20;color:${CAT_COLOR[cat]}">
-          <span>${short}</span><span class="hrs">${h.toFixed(1)}h</span>
-        </div>`;
-      }).join('')}
-    </div>`;
-
-  const grouped = {};
-  mr.forEach(r => { if(!grouped[r.section]) grouped[r.section] = []; grouped[r.section].push(r); });
-
-  let html = '';
-  SEC_ORDER.forEach(sec => {
-    if(!grouped[sec]) return;
-    const recs = grouped[sec].sort((a,b) => (a.date||'').localeCompare(b.date||''));
-    const cat = recs[0].cat;
-    const secTotal = recs.reduce((s,r) => s + r.hours, 0);
-    html += `<div class="rec-section">
-      <div class="rec-sec-hdr ${CAT_BG[cat]}">
-        <span>※ ${sec}</span>
-        <span class="sub-total">小計 ${secTotal.toFixed(1)} 時</span>
-      </div>
-      <div class="rec-list">`;
-    recs.forEach(r => {
-      html += `<div class="rec-item">
-        <div class="rec-info">
-          <div class="rec-task">${r.taskName}</div>
-          ${r.desc ? `<div class="rec-desc">${r.desc}</div>` : ''}
-          <div class="rec-date">${r.date || ''}</div>
-        </div>
-        <div class="rec-hrs">${r.hours}h</div>
-        <button class="rec-del" onclick="deleteRecord(${r.id})">×</button>
-      </div>`;
-    });
-    html += `</div></div>`;
-  });
-  list.innerHTML = html;
+  if(!confirm('確定清除本機快取？')) return;
+  records=[]; save(); renderList(); showToast('已清除本機快取');
 }
 
 // ── Export ──
 function exportExcel() {
   if(!currentMonth) { showToast('請先設定月份'); return; }
-  const mr = records.filter(r => r.month === currentMonth);
+  const mr = records.filter(r=>r.month===currentMonth);
   const wb = XLSX.utils.book_new();
-  const sections = [
-    { title:'※圖書館相關業務', tasks: TASKS.filter(t=>t.c==='lib') },
-    { title:'※IRB(人體試驗委員會)', tasks: TASKS.filter(t=>t.c==='irb') },
-    { title:'※牙醫PGY/國外實習生', tasks: TASKS.filter(t=>t.c==='dental') },
-    { title:'※其他', tasks: TASKS.filter(t=>t.c==='other') },
-    { title:'※主管交辦', tasks: TASKS.filter(t=>t.c==='mgmt') },
-    { title:'※活動', tasks: TASKS.filter(t=>t.c==='event') },
+  const secs = [
+    {title:'※圖書館相關業務', cat:'lib'},
+    {title:'※IRB(人體試驗委員會)', cat:'irb'},
+    {title:'※牙醫PGY/國外實習生', cat:'dental'},
+    {title:'※其他', cat:'other'},
+    {title:'※主管交辦', cat:'mgmt'},
+    {title:'※活動', cat:'event'},
   ];
-  const wsData = [['業務項目','','頻次','數量','預估時數']];
-  let grandTotal = 0;
-  sections.forEach(sec => {
+  const wsData=[['業務項目','','頻次','數量','預估時數']];
+  let grand=0;
+  secs.forEach(sec=>{
+    const secName = CAT_MAP[sec.cat];
+    const secTasks = tasks.filter(t=>t.s===secName);
     wsData.push([sec.title,'','','','']);
-    let secTotal = 0, i = 1;
-    sec.tasks.forEach(t => {
-      const recs = mr.filter(r => r.taskId === t.id);
-      const h = recs.reduce((s,r) => s + r.hours, 0);
-      const desc = recs.map(r => r.desc).filter(Boolean).join('、');
-      wsData.push([i, t.n, t.f, desc, h]);
-      secTotal += h; i++;
+    let tot=0, i=1;
+    secTasks.forEach(t=>{
+      const recs=mr.filter(r=>r.taskId===t.id);
+      const h=recs.reduce((s,r)=>s+r.hours,0);
+      const desc=recs.map(r=>r.desc).filter(Boolean).join('、');
+      wsData.push([i,t.n,t.f,desc,h]); tot+=h; i++;
     });
-    wsData.push(['','','','小計', secTotal]);
-    grandTotal += secTotal;
+    wsData.push(['','','','小計',tot]); grand+=tot;
     wsData.push(['','','','','']);
   });
-  wsData.push(['','','','總計時數', grandTotal]);
-  const ws = XLSX.utils.aoa_to_sheet(wsData);
-  ws['!cols'] = [{wch:6},{wch:28},{wch:8},{wch:32},{wch:10}];
-  XLSX.utils.book_append_sheet(wb, ws, currentMonth);
-  const ws2Data = [['月份','類別','業務項目','說明/數量','時數','日期']];
-  mr.forEach(r => ws2Data.push([r.month, r.section, r.taskName, r.desc, r.hours, r.date]));
-  const ws2 = XLSX.utils.aoa_to_sheet(ws2Data);
-  ws2['!cols'] = [{wch:8},{wch:18},{wch:28},{wch:40},{wch:8},{wch:12}];
-  XLSX.utils.book_append_sheet(wb, ws2, '原始記錄');
-  XLSX.writeFile(wb, `業務報告_蕙琦_${currentMonth}.xlsx`);
-}
-
-function exportCSV() {
-  if(!currentMonth) { showToast('請先設定月份'); return; }
-  const mr = records.filter(r => r.month === currentMonth);
-  if(!mr.length) { showToast('本月尚無記錄'); return; }
-  let csv = '月份,類別,業務項目,說明/數量,時數,日期\n';
-  mr.forEach(r => { csv += `"${r.month}","${r.section}","${r.taskName}","${r.desc}","${r.hours}","${r.date}"\n`; });
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-  a.download = `業務記錄_${currentMonth}.csv`; a.click();
+  wsData.push(['','','','總計時數',grand]);
+  const ws=XLSX.utils.aoa_to_sheet(wsData);
+  ws['!cols']=[{wch:6},{wch:28},{wch:8},{wch:32},{wch:10}];
+  XLSX.utils.book_append_sheet(wb,ws,currentMonth);
+  const ws2Data=[['月份','類別','業務項目','說明/數量','時數','日期']];
+  mr.forEach(r=>ws2Data.push([r.month,r.section,r.taskName,r.desc,r.hours,r.date]));
+  const ws2=XLSX.utils.aoa_to_sheet(ws2Data);
+  ws2['!cols']=[{wch:8},{wch:18},{wch:28},{wch:40},{wch:8},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws2,'原始記錄');
+  XLSX.writeFile(wb,`業務報告_蕙琦_${currentMonth}.xlsx`);
 }
 
 init();
