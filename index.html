@@ -220,6 +220,27 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: va
 .modal-btns button { flex: 1; padding: 11px; border-radius: 10px; border: none; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; }
 .btn-confirm { background: var(--accent); color: white; }
 .btn-close-modal { background: var(--bg); color: var(--ink2); }
+
+/* Edit record modal */
+.edit-modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  display: none; align-items: flex-end; justify-content: center; z-index: 300;
+}
+.edit-modal-overlay.on { display: flex; }
+.edit-modal {
+  background: var(--card); border-radius: 16px 16px 0 0;
+  padding: 20px; width: 100%; max-width: 500px;
+  animation: slideUp 0.25s ease;
+}
+.edit-modal h3 { font-size: 14px; font-weight: 900; color: var(--accent); margin-bottom: 14px; }
+.edit-modal .field input, .edit-modal .field textarea {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 9px 12px; font-size: 14px; font-family: inherit; background: white;
+}
+.edit-modal .field input:focus, .edit-modal .field textarea:focus { outline: none; border-color: var(--accent); }
+.edit-modal .field textarea { resize: none; height: 60px; }
+.rec-hrs { cursor: pointer; transition: transform 0.1s; }
+.rec-hrs:active { transform: scale(0.92); }
 </style>
 </head>
 <body>
@@ -251,6 +272,25 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: va
     <div class="modal-btns">
       <button class="btn-close-modal" onclick="closeModal()">取消</button>
       <button class="btn-confirm" onclick="confirmAddTask()">新增</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Record Modal -->
+<div class="edit-modal-overlay" id="editRecModal">
+  <div class="edit-modal">
+    <h3 id="editRecTitle">✏️ 編輯記錄</h3>
+    <div class="field"><label>說明 / 數量</label>
+      <textarea id="editDesc"></textarea></div>
+    <div style="display:flex;gap:8px">
+      <div class="field" style="flex:1"><label>時數（小時）</label>
+        <input type="number" id="editHours" min="0" step="0.5" inputmode="decimal"></div>
+      <div class="field" style="flex:1"><label>日期</label>
+        <input type="date" id="editDate"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-close-modal" onclick="closeEditModal()">取消</button>
+      <button class="btn-confirm" onclick="saveEditRecord()">✓ 儲存</button>
     </div>
   </div>
 </div>
@@ -654,7 +694,7 @@ function renderList() {
           ${r.desc?`<div class="rec-desc">${r.desc}</div>`:''}
           <div class="rec-date">${r.date||''}</div>
         </div>
-        <div class="rec-hrs">${r.hours}h</div>
+        <div class="rec-hrs" onclick="openEditModal(${r.id})" title="點擊編輯">${r.hours}h ✏️</div>
         <button class="rec-del" onclick="deleteRecord(${r.id})">×</button>
       </div>`;
     });
@@ -697,6 +737,41 @@ async function loadFromCloud() {
 function closeModal() {
   document.getElementById('addTaskModal').classList.remove('on');
   modalSection = null;
+}
+
+let editingRecordId = null;
+
+function openEditModal(id) {
+  const r = records.find(r => r.id === id);
+  if(!r) return;
+  editingRecordId = id;
+  document.getElementById('editRecTitle').textContent = '✏️ ' + r.taskName;
+  document.getElementById('editDesc').value = r.desc || '';
+  document.getElementById('editHours').value = r.hours;
+  document.getElementById('editDate').value = r.date || '';
+  document.getElementById('editRecModal').classList.add('on');
+  setTimeout(() => document.getElementById('editHours').select(), 100);
+}
+
+function closeEditModal() {
+  document.getElementById('editRecModal').classList.remove('on');
+  editingRecordId = null;
+}
+
+async function saveEditRecord() {
+  const r = records.find(r => r.id === editingRecordId);
+  if(!r) return;
+  r.desc = document.getElementById('editDesc').value.trim();
+  r.hours = parseFloat(document.getElementById('editHours').value) || 0;
+  r.date = document.getElementById('editDate').value;
+  save();
+  closeEditModal();
+  renderList();
+  showToast('✓ 已更新');
+  try {
+    await fetch(API, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'update', ...r }) });
+  } catch(e) {}
 }
 
 function clearLocal() {
