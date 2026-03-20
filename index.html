@@ -692,7 +692,7 @@ function renderList() {
         <div class="rec-info">
           <div class="rec-task">${r.taskName}</div>
           ${r.desc?`<div class="rec-desc">${r.desc}</div>`:''}
-          <div class="rec-date">${r.date||''}</div>
+          <div class="rec-date">${formatDate(r.date)}</div>
         </div>
         <div class="rec-hrs" onclick="openEditModal(${r.id})" title="點擊編輯">${r.hours}h ✏️</div>
         <button class="rec-del" onclick="deleteRecord(${r.id})">×</button>
@@ -704,6 +704,18 @@ function renderList() {
 }
 
 // ── Cloud Sync ──
+function formatDate(d) {
+  if(!d) return '';
+  // Handle ISO format like 2026-03-01T16:00:00.000Z
+  if(typeof d === 'string' && d.includes('T')) return d.split('T')[0];
+  // Handle Excel date numbers
+  if(typeof d === 'number') {
+    const date = new Date(Math.round((d - 25569) * 86400 * 1000));
+    return date.toISOString().split('T')[0];
+  }
+  return String(d).split('T')[0];
+}
+
 async function loadFromCloud() {
   showLoading('從 Google 試算表同步…');
   try {
@@ -711,8 +723,12 @@ async function loadFromCloud() {
     const data = await res.json();
     if(Array.isArray(data)) {
       const recData = data.filter(r=>r['月份']&&r['type']!=='task');
-      records = recData.map(r=>({
-        id: r['id']||Date.now()+Math.random(),
+      // Build a map of existing local records by id for merging
+      const localById = {};
+      records.forEach(r => { localById[String(r.id)] = r; });
+      // Cloud records are the source of truth — replace all
+      const cloudRecords = recData.map(r=>({
+        id: r['id'] ? Number(r['id']) : Date.now()+Math.random(),
         month: String(r['月份']||''),
         taskId: r['taskId']||'',
         taskName: r['業務項目']||'',
@@ -720,8 +736,15 @@ async function loadFromCloud() {
         cat: SEC_CAT[r['類別']]||'other',
         desc: r['說明數量']||'',
         hours: parseFloat(r['時數'])||0,
-        date: r['日期']||''
+        date: formatDate(r['日期'])
       }));
+      // Deduplicate by id (keep last occurrence)
+      const seen = new Set();
+      records = cloudRecords.filter(r => {
+        const key = String(r.id);
+        if(seen.has(key)) return false;
+        seen.add(key); return true;
+      });
       const taskData = data.filter(r=>r['type']==='task');
       if(taskData.length > 0) {
         tasks = taskData.map(r=>({ s:r['section'], id:r['id'], n:r['name'], f:r['freq'] }));
