@@ -241,6 +241,30 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: va
 .edit-modal .field textarea { resize: none; height: 60px; }
 .rec-hrs { cursor: pointer; transition: transform 0.1s; }
 .rec-hrs:active { transform: scale(0.92); }
+
+/* Summary styles */
+.sum-sec { margin-bottom: 16px; }
+.sum-sec-hdr {
+  color: white; padding: 7px 12px; border-radius: 8px 8px 0 0;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; font-weight: 900;
+}
+.sum-sec-hdr .sub { font-size: 11px; background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 10px; }
+.sum-table { width: 100%; background: var(--card); border-radius: 0 0 8px 8px; overflow: hidden; }
+.sum-row {
+  border-bottom: 1px solid var(--border); padding: 10px 12px;
+}
+.sum-row:last-child { border-bottom: none; }
+.sum-row-hdr { display: flex; align-items: center; justify-content: space-between; }
+.sum-task-name { font-size: 13px; font-weight: 700; color: var(--ink); flex: 1; }
+.sum-hrs { background: var(--ink); color: white; border-radius: 20px; padding: 2px 10px; font-size: 12px; font-weight: 900; white-space: nowrap; }
+.sum-notes { margin-top: 6px; padding-left: 4px; }
+.sum-note-item {
+  font-size: 12px; color: var(--ink2); padding: 2px 0 2px 12px;
+  border-left: 2px solid var(--border); margin-bottom: 3px;
+  display: flex; gap: 6px; align-items: flex-start;
+}
+.sum-note-date { font-size: 11px; color: #aaa; white-space: nowrap; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -308,6 +332,7 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: va
 <div class="tabs">
   <div class="tab active" onclick="showTab('record')" data-tab="record">＋ 記錄</div>
   <div class="tab" onclick="showTab('list')" data-tab="list">📋 本月</div>
+  <div class="tab" onclick="showTab('summary')" data-tab="summary">📈 統計</div>
   <div class="tab" onclick="showTab('manage')" data-tab="manage">✏️ 管理項目</div>
   <div class="tab" onclick="showTab('export')" data-tab="export">📊 匯出</div>
   <div class="tab" onclick="showTab('setting')" data-tab="setting">⚙ 設定</div>
@@ -321,6 +346,10 @@ body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); color: va
 <div class="page" id="page-list">
   <div id="statsArea"></div>
   <div id="recordList"></div>
+</div>
+
+<div class="page" id="page-summary">
+  <div id="summaryContent"></div>
 </div>
 
 <div class="page" id="page-manage">
@@ -462,6 +491,7 @@ function showTab(tab) {
   document.getElementById('page-' + tab).classList.add('active');
   document.querySelector(`[data-tab="${tab}"]`)?.classList.add('active');
   if(tab==='list') renderList();
+  if(tab==='summary') renderSummary();
   if(tab==='manage') renderManage();
   if(tab==='setting') renderSetting();
 }
@@ -703,7 +733,76 @@ function renderList() {
   list.innerHTML=html;
 }
 
-// ── Cloud Sync ──
+// ── Summary ──
+function renderSummary() {
+  const mr = records.filter(r => r.month === currentMonth);
+  const container = document.getElementById('summaryContent');
+  if(!mr.length) {
+    container.innerHTML = `<div class="empty"><div class="ico">📈</div><p>本月尚無記錄</p></div>`;
+    return;
+  }
+
+  const total = mr.reduce((s,r) => s+r.hours, 0);
+
+  // Group by section → task
+  const bySec = {};
+  SEC_ORDER.forEach(sec => { bySec[sec] = {}; });
+  mr.forEach(r => {
+    const sec = r.section || '其他';
+    if(!bySec[sec]) bySec[sec] = {};
+    if(!bySec[sec][r.taskName]) bySec[sec][r.taskName] = { hours:0, notes:[] };
+    bySec[sec][r.taskName].hours += r.hours;
+    if(r.desc || r.date) {
+      bySec[sec][r.taskName].notes.push({ desc: r.desc, date: r.date });
+    }
+  });
+
+  let html = `<div class="stats-row" style="margin-bottom:14px">
+    <div class="stat-card"><div class="val">${total.toFixed(1)}</div><div class="lbl">總時數</div></div>
+    <div class="stat-card"><div class="val">${mr.length}</div><div class="lbl">記錄筆數</div></div>
+    <div class="stat-card"><div class="val">${Object.keys(bySec).filter(s=>Object.keys(bySec[s]).length>0).length}</div><div class="lbl">業務類別</div></div>
+  </div>`;
+
+  SEC_ORDER.forEach(sec => {
+    const tasks = bySec[sec];
+    if(!tasks || !Object.keys(tasks).length) return;
+    const cat = SEC_CAT[sec] || 'other';
+    const secTotal = Object.values(tasks).reduce((s,t) => s+t.hours, 0);
+
+    html += `<div class="sum-sec">
+      <div class="sum-sec-hdr ${BG_CLASS[cat]}">
+        <span>※ ${sec}</span>
+        <span class="sub">小計 ${secTotal.toFixed(1)} 時</span>
+      </div>
+      <div class="sum-table">`;
+
+    Object.entries(tasks).forEach(([taskName, data]) => {
+      const sortedNotes = data.notes.slice().sort((a,b) => (a.date||'').localeCompare(b.date||''));
+      html += `<div class="sum-row">
+        <div class="sum-row-hdr">
+          <span class="sum-task-name">${taskName}</span>
+          <span class="sum-hrs">${data.hours.toFixed(1)}h</span>
+        </div>`;
+      if(sortedNotes.length) {
+        html += `<div class="sum-notes">`;
+        sortedNotes.forEach(n => {
+          if(n.desc || n.date) {
+            html += `<div class="sum-note-item">
+              <span class="sum-note-date">${n.date||''}</span>
+              <span>${n.desc||''}</span>
+            </div>`;
+          }
+        });
+        html += `</div>`;
+      }
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  container.innerHTML = html;
+}
 function formatDate(d) {
   if(!d) return '';
   // Handle ISO format like 2026-03-01T16:00:00.000Z
@@ -722,32 +821,34 @@ async function loadFromCloud() {
     const res = await fetch(API + '?t=' + Date.now());
     const data = await res.json();
     if(Array.isArray(data)) {
-      const recData = data.filter(r=>r['月份']&&r['type']!=='task');
-      // Build a map of existing local records by id for merging
-      const localById = {};
-      records.forEach(r => { localById[String(r.id)] = r; });
-      // Cloud records are the source of truth — replace all
-      const cloudRecords = recData.map(r=>({
-        id: r['id'] ? Number(r['id']) : Date.now()+Math.random(),
-        month: String(r['月份']||''),
-        taskId: r['taskId']||'',
-        taskName: r['業務項目']||'',
-        section: r['類別']||'',
-        cat: SEC_CAT[r['類別']]||'other',
-        desc: r['說明數量']||'',
-        hours: parseFloat(r['時數'])||0,
-        date: formatDate(r['日期'])
-      }));
-      // Deduplicate by id (keep last occurrence)
-      const seen = new Set();
-      records = cloudRecords.filter(r => {
-        const key = String(r.id);
-        if(seen.has(key)) return false;
-        seen.add(key); return true;
+      const recData = data.filter(r => r['月份'] && r['type'] !== 'task');
+
+      // Convert cloud rows → record objects, skip rows without id
+      const cloudRecords = [];
+      const seenIds = new Set();
+      recData.forEach(r => {
+        const idStr = String(r['id'] || '').trim();
+        if(!idStr || idStr === 'undefined') return; // skip rows without id
+        if(seenIds.has(idStr)) return;              // skip duplicates
+        seenIds.add(idStr);
+        cloudRecords.push({
+          id: Number(idStr) || idStr,
+          month: String(r['月份'] || ''),
+          taskId: r['taskId'] || '',
+          taskName: r['業務項目'] || '',
+          section: r['類別'] || '',
+          cat: SEC_CAT[r['類別']] || 'other',
+          desc: r['說明數量'] || '',
+          hours: parseFloat(r['時數']) || 0,
+          date: formatDate(r['日期'])
+        });
       });
-      const taskData = data.filter(r=>r['type']==='task');
+
+      records = cloudRecords;
+
+      const taskData = data.filter(r => r['type'] === 'task');
       if(taskData.length > 0) {
-        tasks = taskData.map(r=>({ s:r['section'], id:r['id'], n:r['name'], f:r['freq'] }));
+        tasks = taskData.map(r => ({ s: r['section'], id: r['id'], n: r['name'], f: r['freq'] }));
       }
       save();
       showToast(`✓ 同步完成，共 ${records.length} 筆`);
