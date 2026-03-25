@@ -541,11 +541,19 @@ function renderTaskList() {
   document.getElementById('taskList').innerHTML = html;
 }
 
+function localToday() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
 function selectTask(id) {
   document.querySelectorAll('.task-row').forEach(r => r.classList.remove('active'));
   document.getElementById('trow-' + id)?.classList.add('active');
   selectedTask = tasks.find(t => t.id === id);
-  const today = new Date().toISOString().split('T')[0];
+  const today = localToday();
   const form = document.getElementById('inputForm');
   form.style.display = 'block';
   form.innerHTML = `<div class="input-card">
@@ -805,12 +813,24 @@ function renderSummary() {
 }
 function formatDate(d) {
   if(!d) return '';
-  // Handle ISO format like 2026-03-01T16:00:00.000Z
-  if(typeof d === 'string' && d.includes('T')) return d.split('T')[0];
-  // Handle Excel date numbers
+  // Plain date string YYYY-MM-DD — use directly
+  if(typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+  // ISO string with time e.g. 2026-03-25T16:00:00.000Z — parse as local
+  if(typeof d === 'string' && d.includes('T')) {
+    // Add 8 hours (Taiwan UTC+8) to correct timezone shift
+    const dt = new Date(new Date(d).getTime() + 8*60*60*1000);
+    const y = dt.getUTCFullYear();
+    const m = String(dt.getUTCMonth()+1).padStart(2,'0');
+    const day = String(dt.getUTCDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  // Excel serial number
   if(typeof d === 'number') {
-    const date = new Date(Math.round((d - 25569) * 86400 * 1000));
-    return date.toISOString().split('T')[0];
+    const dt = new Date(Math.round((d - 25569) * 86400 * 1000));
+    const y = dt.getUTCFullYear();
+    const m = String(dt.getUTCMonth()+1).padStart(2,'0');
+    const day = String(dt.getUTCDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
   }
   return String(d).split('T')[0];
 }
