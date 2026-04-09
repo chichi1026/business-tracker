@@ -726,10 +726,11 @@ function renderList() {
         <span>※ ${sec}</span><span class="sub">小計 ${secTotal.toFixed(1)} 時</span>
       </div><div class="rec-list">`;
     recs.forEach(r=>{
+      const desc = cleanDesc(r.desc);
       html+=`<div class="rec-item">
         <div class="rec-info">
           <div class="rec-task">${r.taskName}</div>
-          ${r.desc?`<div class="rec-desc">${r.desc}</div>`:''}
+          ${desc?`<div class="rec-desc">${desc}</div>`:''}
           <div class="rec-date">${formatDate(r.date)}</div>
         </div>
         <div class="rec-hrs" onclick="openEditModal(${r.id})" title="點擊編輯">${r.hours}h ✏️</div>
@@ -794,10 +795,11 @@ function renderSummary() {
       if(sortedNotes.length) {
         html += `<div class="sum-notes">`;
         sortedNotes.forEach(n => {
-          if(n.desc || n.date) {
+          const noteDesc = cleanDesc(n.desc);
+          if(noteDesc || n.date) {
             html += `<div class="sum-note-item">
               <span class="sum-note-date">${n.date||''}</span>
-              <span>${n.desc||''}</span>
+              <span>${noteDesc||''}</span>
             </div>`;
           }
         });
@@ -835,6 +837,13 @@ function formatDate(d) {
   return String(d).split('T')[0];
 }
 
+function cleanDesc(desc) {
+  if(!desc) return '';
+  // Remove ISO datetime strings that got stored in desc by mistake
+  const cleaned = String(desc).replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d+Z/g, '').trim();
+  return cleaned;
+}
+
 async function loadFromCloud() {
   showLoading('從 Google 試算表同步…');
   try {
@@ -858,7 +867,7 @@ async function loadFromCloud() {
           taskName: r['業務項目'] || '',
           section: r['類別'] || '',
           cat: SEC_CAT[r['類別']] || 'other',
-          desc: r['說明數量'] || '',
+          desc: cleanDesc(r['說明數量'] || ''),
           hours: parseFloat(r['時數']) || 0,
           date: formatDate(r['日期'])
         });
